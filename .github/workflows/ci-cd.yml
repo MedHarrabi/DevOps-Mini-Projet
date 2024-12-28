@@ -1,56 +1,38 @@
-name: CI/CD Pipeline
+name: CI - Build and Push Docker Image
 
 on:
   push:
     branches:
       - master  # Trigger on pushes to the master branch
 
+env:
+  DOCKER_IMAGE: mo8hrb/devopsapp  # Replace with your Docker Hub username and repository name
+
 jobs:
-  # Step 1: Run Tests
-  test:
+  docker-build-push:
+    name: Build and Push Docker Image
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Log in to DockerHub
+        uses: docker/login-action@v2
         with:
-          node-version: '16'
-
-      - name: Install dependencies
-        run: npm install
-
-      - name: Run tests
-        run: npm test
-
-  # Step 2: Build and Push Docker Image
-  build-and-push:
-    runs-on: ubuntu-latest
-    needs: test  # Runs only if the 'test' job succeeds
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Log in to Docker Hub
-        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Build and push Docker image
-        run: |
-          docker build -t <dockerhub-username>/<app-name>:latest .
-          docker push <dockerhub-username>/<app-name>:latest
-
-  # Step 3: Deploy to Azure App Service
-  deploy:
-    runs-on: ubuntu-latest
-    needs: build-and-push  # Runs only if the 'build-and-push' job succeeds
-
-    steps:
-      - name: Deploy to Azure App Service
-        uses: azure/webapps-deploy@v2
+        uses: docker/build-push-action@v3
         with:
-          app-name: <your-azure-app-name>
-          slot-name: production
-          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+          context: .                              # Context for Docker build
+          file: ./Dockerfile                      # Path to Dockerfile
+          push: true                              # Push image to DockerHub
+          tags: ${{ env.DOCKER_IMAGE }}:latest    # Tag the image with 'latest'
