@@ -2,7 +2,7 @@ name: Node.js CI/CD Pipeline with Docker and Azure
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "master" ]
   workflow_dispatch:
 
 env:
