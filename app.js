@@ -16,7 +16,7 @@ app.get('/', (req, res) => {
 
 // Start server and export it for use in the test
 const startServer = (_port) => {
-    return app.listen(_port, () => {
+    return app.listen(_port, '0.0.0.0', () => {
         console.log('Server is running on http://localhost:3000');
     });
 };
