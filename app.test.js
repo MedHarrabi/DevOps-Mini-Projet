@@ -1,13 +1,17 @@
 const { startServer } = require('./app');
 const request = require('supertest');
 let server;
+let port;
 
 beforeAll(async () => {
-    server = await startServer(3001);  // Start the server before tests
+    port = 3001;  // Assign a different port or dynamically allocate a free port
+    server = await startServer(port);  // Wait for the server to start before running tests
 });
 
-afterAll((done) => {
-    server.close(done);  // Close the server after tests
+afterAll(async () => {
+    await new Promise((resolve) => {
+        server.close(resolve);  // Ensure that the server is fully closed before Jest exits
+    });
 });
 
 describe('GET /', () => {
