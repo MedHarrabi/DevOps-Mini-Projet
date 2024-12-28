@@ -1,16 +1,24 @@
 const express = require('express');
-const path = require('path');
+const responseTime = require('response-time');  // Import response-time
 const app = express();
+const path = require('path');
 
-// Serve static files from the 'public' directory
+// Use response-time middleware to add 'X-Response-Time' header
+app.use(responseTime());
+
+// Serve static files from the "public" directory
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Route for the home page
-app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'public', 'index.html')));
-
-// Listen on port 3000
-app.listen(3000, () => {
-    console.log('Server is running on http://localhost:3000');
+// Define a route for the root path
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-module.exports = app;
+// Start server and export it for use in the test
+const startServer = (_port) => {
+    return app.listen(_port, () => {
+        console.log('Server is running on http://localhost:3000');
+    });
+};
+startServer(3000);
+module.exports = { app, startServer };
