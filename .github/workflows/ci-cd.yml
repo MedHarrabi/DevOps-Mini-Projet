@@ -80,7 +80,6 @@ jobs:
       - name: npm install
         run: |
           npm install
-          npm start
 
       - name: Deploy Docker image to Azure Web App
         uses: azure/webapps-deploy@v2
