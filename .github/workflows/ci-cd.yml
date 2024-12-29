@@ -8,7 +8,7 @@ on:
 env:
   DOCKER_IMAGE: 'mo8hrb/devopsapp'  # Docker image name
   NODE_VERSION: '20'  # Node.js version
-  AZURE_WEBAPP_NAME: 'DevOps-Mini-Projet'  # Replace with your Azure Web App name
+  AZURE_WEBAPP_NAME: 'web-app-devops'  # Replace with your Azure Web App name
 
 permissions:
   contents: read
