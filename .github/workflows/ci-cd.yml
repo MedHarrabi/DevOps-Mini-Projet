@@ -7,8 +7,8 @@ on:
 
 env:
   DOCKER_IMAGE: 'mo8hrb/devopsapp'  # Docker image name
-  NODE_VERSION: '20'  # Node.js version
-  AZURE_WEBAPP_NAME: 'web-app-devops'  # Replace with your Azure Web App name
+  NODE_VERSION: '20.x'  # Node.js version
+  AZURE_WEBAPP_NAME: 'devops-mini-projet'  # Replace with your Azure Web App name
 
 permissions:
   contents: read
@@ -70,13 +70,17 @@ jobs:
       name: 'Production'
 
     steps:
-      - name: Set up Azure CLI
-        uses: azure/setup-azurecli@v1  # Corrected Azure CLI action version
+      - uses: actions/checkout@v3
 
-      - name: Login to Azure
-        uses: azure/login@v1  # Corrected Azure login action
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
         with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}  # Use the secret for Azure credentials
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+      - name: npm install
+        run: |
+          npm install
+          npm start
 
       - name: Deploy Docker image to Azure Web App
         uses: azure/webapps-deploy@v2
