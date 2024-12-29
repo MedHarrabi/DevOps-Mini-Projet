@@ -83,4 +83,4 @@ jobs:
       - name: Restart Azure Web App
         run: |
           echo "Restarting Azure Web App..."
-          az webapp restart --name ${{ env.AZURE_WEBAPP_NAME }} --resource-group devops-mini-projet_group
+          az webapp restart --name "${{ env.AZURE_WEBAPP_NAME }}" --resource-group "devops-mini-projet_group"
